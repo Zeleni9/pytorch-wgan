@@ -37,5 +37,5 @@ def check_args(args):
         args.channels = 3
     else:
         args.channels = 1
-
+    args.cuda = True if args.cuda == 'True' else False
     return args

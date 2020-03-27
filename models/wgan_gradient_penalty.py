@@ -11,6 +11,8 @@ from utils.tensorboard_logger import Logger
 from itertools import chain
 from torchvision import utils
 
+SAVE_PER_TIMES = 100
+
 class Generator(torch.nn.Module):
     def __init__(self, channels):
         super().__init__()
@@ -114,14 +116,22 @@ class WGAN_GP(object):
         self.critic_iter = 5
         self.lambda_term = 10
 
+    def get_torch_variable(self, arg):
+        if self.cuda:
+            return Variable(arg).cuda(self.cuda_index)
+        else:
+            return Variable(arg)
 
     def check_cuda(self, cuda_flag=False):
+        print(cuda_flag)
         if cuda_flag:
             self.cuda_index = 0
             self.cuda = True
             self.D.cuda(self.cuda_index)
             self.G.cuda(self.cuda_index)
             print("Cuda enabled flag: {}".format(self.cuda))
+        else:
+            self.cuda = False
 
 
     def train(self, train_loader):
@@ -131,14 +141,13 @@ class WGAN_GP(object):
         # Now batches are callable self.data.next()
         self.data = self.get_infinite_batches(train_loader)
 
-        one = torch.FloatTensor([1])
+        one = torch.tensor(1, dtype=torch.float)
         mone = one * -1
         if self.cuda:
             one = one.cuda(self.cuda_index)
             mone = mone.cuda(self.cuda_index)
 
         for g_iter in range(self.generator_iters):
-
             # Requires grad, Generator requires_grad = False
             for p in self.D.parameters():
                 p.requires_grad = True
@@ -157,10 +166,7 @@ class WGAN_GP(object):
 
                 z = torch.rand((self.batch_size, 100, 1, 1))
 
-                if self.cuda:
-                    images, z = Variable(images.cuda(self.cuda_index)), Variable(z.cuda(self.cuda_index))
-                else:
-                    images, z = Variable(images), Variable(z)
+                images, z = self.get_torch_variable(images), self.get_torch_variable(z) 
 
                 # Train discriminator
                 # WGAN - Training discriminator more iterations than generator
@@ -170,10 +176,8 @@ class WGAN_GP(object):
                 d_loss_real.backward(mone)
 
                 # Train with fake images
-                if self.cuda:
-                    z = Variable(torch.randn(self.batch_size, 100, 1, 1)).cuda(self.cuda_index)
-                else:
-                    z = Variable(torch.randn(self.batch_size, 100, 1, 1))
+                z = self.get_torch_variable(torch.randn(self.batch_size, 100, 1, 1))
+
                 fake_images = self.G(z)
                 d_loss_fake = self.D(fake_images)
                 d_loss_fake = d_loss_fake.mean()
@@ -187,6 +191,7 @@ class WGAN_GP(object):
                 d_loss = d_loss_fake - d_loss_real + gradient_penalty
                 Wasserstein_D = d_loss_real - d_loss_fake
                 self.d_optimizer.step()
+                print(f'  Discriminator iteration: {d_iter}/{self.critic_iter}, loss_fake: {d_loss_fake}, loss_real: {d_loss_real}')
 
             # Generator update
             for p in self.D.parameters():
@@ -195,16 +200,16 @@ class WGAN_GP(object):
             self.G.zero_grad()
             # train generator
             # compute loss with fake images
-            z = Variable(torch.randn(self.batch_size, 100, 1, 1)).cuda(self.cuda_index)
+            z = self.get_torch_variable(torch.randn(self.batch_size, 100, 1, 1))
             fake_images = self.G(z)
             g_loss = self.D(fake_images)
             g_loss = g_loss.mean()
             g_loss.backward(mone)
             g_cost = -g_loss
             self.g_optimizer.step()
-
+            print(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {g_loss}')
             # Saving model and sampling images every 1000th generator iterations
-            if (g_iter) % 1000 == 0:
+            if (g_iter) % SAVE_PER_TIMES == 0:
                 self.save_model()
                 # # Workaround because graphic card memory can't store more than 830 examples in memory for generating image
                 # # Therefore doing loop and generating 800 examples and stacking into list of samples to get 8000 generated images
@@ -227,7 +232,7 @@ class WGAN_GP(object):
                     os.makedirs('training_result_images/')
 
                 # Denormalize images and save them in grid 8x8
-                z = Variable(torch.randn(800, 100, 1, 1)).cuda(self.cuda_index)
+                z = self.get_torch_variable(torch.randn(800, 100, 1, 1))
                 samples = self.G(z)
                 samples = samples.mul(0.5).add(0.5)
                 samples = samples.data.cpu()[:64]
@@ -248,11 +253,11 @@ class WGAN_GP(object):
                 # ============ TensorBoard logging ============#
                 # (1) Log the scalar values
                 info = {
-                    'Wasserstein distance': Wasserstein_D.data[0],
-                    'Loss D': d_loss.data[0],
-                    'Loss G': g_cost.data[0],
-                    'Loss D Real': d_loss_real.data[0],
-                    'Loss D Fake': d_loss_fake.data[0]
+                    'Wasserstein distance': Wasserstein_D.data,
+                    'Loss D': d_loss.data,
+                    'Loss G': g_cost.data,
+                    'Loss D Real': d_loss_real.data,
+                    'Loss D Fake': d_loss_fake.data
 
                 }
 
@@ -279,7 +284,7 @@ class WGAN_GP(object):
 
     def evaluate(self, test_loader, D_model_path, G_model_path):
         self.load_model(D_model_path, G_model_path)
-        z = Variable(torch.randn(self.batch_size, 100, 1, 1)).cuda(self.cuda_index)
+        z = self.get_torch_variable(torch.randn(self.batch_size, 100, 1, 1))
         samples = self.G(z)
         samples = samples.mul(0.5).add(0.5)
         samples = samples.data.cpu()
