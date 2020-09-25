@@ -19,7 +19,7 @@ python-dateutil==2.8.1
 scipy==1.2.1
 six==1.14.0
 tensorboard==1.14.0
-tensorflow==1.14.0
+tensorflow==1.15.4
 tensorflow-estimator==1.14.0
 termcolor==1.1.0
 torch==1.4.0
