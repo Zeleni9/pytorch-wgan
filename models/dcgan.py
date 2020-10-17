@@ -87,7 +87,7 @@ class DCGAN_MODEL(object):
         # binary cross entropy loss and optimizer
         self.loss = nn.BCELoss()
 
-        self.cuda = "False"
+        self.cuda = False
         self.cuda_index = 0
         # check if cuda is available
         self.check_cuda(args.cuda)
@@ -221,15 +221,15 @@ class DCGAN_MODEL(object):
 
                 if ((i + 1) % 100) == 0:
                     print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f" %
-                          ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data[0], g_loss.data[0]))
+                          ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data, g_loss.data))
 
                     z = Variable(torch.randn(self.batch_size, 100, 1, 1).cuda(self.cuda_index))
 
                     # TensorBoard logging
                     # Log the scalar values
                     info = {
-                        'd_loss': d_loss.data[0],
-                        'g_loss': g_loss.data[0]
+                        'd_loss': d_loss.data,
+                        'g_loss': g_loss.data
                     }
 
                     for tag, value in info.items():

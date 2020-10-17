@@ -1,6 +1,7 @@
 import argparse
 import os
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Pytorch implementation of GAN models.")
 
@@ -18,6 +19,7 @@ def parse_args():
     parser.add_argument('--load_G', type=str, default='False', help='Path for loading Generator network')
     parser.add_argument('--generator_iters', type=int, default=10000, help='The number of iterations for generator in WGAN model.')
     return check_args(parser.parse_args())
+
 
 # Checking arguments
 def check_args(args):

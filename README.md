@@ -13,9 +13,9 @@ The prominent packages are:
 
 * numpy
 * scikit-learn
-* tensorflow 1.5.0
-* pytorch 0.3.0
-* torchvision 0.3.0
+* tensorflow 2.0
+* pytorch 1.6.0
+* torchvision 0.7.0
 
 To install all the dependencies quickly and easily you should use __pip__
 

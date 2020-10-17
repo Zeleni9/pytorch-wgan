@@ -166,7 +166,7 @@ class WGAN_GP(object):
 
                 z = torch.rand((self.batch_size, 100, 1, 1))
 
-                images, z = self.get_torch_variable(images), self.get_torch_variable(z) 
+                images, z = self.get_torch_variable(images), self.get_torch_variable(z)
 
                 # Train discriminator
                 # WGAN - Training discriminator more iterations than generator

@@ -16,7 +16,7 @@ def main(args):
     elif args.model == 'WGAN-CP':
         model = WGAN_CP(args)
     elif args.model == 'WGAN-GP':
-        model =  model = WGAN_GP(args)
+        model = WGAN_GP(args)
     else:
         print("Model type non-existing. Try again.")
         exit(-1)

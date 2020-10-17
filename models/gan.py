@@ -1,9 +1,10 @@
+import os
+import time
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-import time
-import os
 from utils.tensorboard_logger import Logger
+
 
 class GAN(object):
     def __init__(self, args):
@@ -26,7 +27,9 @@ class GAN(object):
             nn.Linear(256, 1),
             nn.Sigmoid())
 
-        # Check if cuda is available
+        self.cuda = False
+        self.cuda_index = 0
+        # check if cuda is available
         self.check_cuda(args.cuda)
 
         # Binary cross entropy loss and optimizer
@@ -65,12 +68,13 @@ class GAN(object):
                 images = images.view(self.batch_size, -1)
                 z = torch.rand((self.batch_size, 100))
 
-                real_labels = Variable(torch.ones(self.batch_size)).cuda(self.cuda_index)
-                fake_labels = Variable(torch.zeros(self.batch_size)).cuda(self.cuda_index)
-
                 if self.cuda:
+                    real_labels = Variable(torch.ones(self.batch_size)).cuda(self.cuda_index)
+                    fake_labels = Variable(torch.zeros(self.batch_size)).cuda(self.cuda_index)
                     images, z = Variable(images.cuda(self.cuda_index)), Variable(z.cuda(self.cuda_index))
                 else:
+                    real_labels = Variable(torch.ones(self.batch_size))
+                    fake_labels = Variable(torch.zeros(self.batch_size))
                     images, z = Variable(images), Variable(z)
 
                 # Train discriminator
@@ -115,15 +119,15 @@ class GAN(object):
 
                 if ((i + 1) % 100) == 0:
                     print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f" %
-                          ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data[0], g_loss.data[0]))
+                          ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data, g_loss.data))
 
                     z = Variable(torch.randn(self.batch_size, 100).cuda(self.cuda_index))
 
                     # ============ TensorBoard logging ============#
                     # (1) Log the scalar values
                     info = {
-                        'd_loss': d_loss.data[0],
-                        'g_loss': g_loss.data[0]
+                        'd_loss': d_loss.data,
+                        'g_loss': g_loss.data
                     }
 
                     for tag, value in info.items():
@@ -165,7 +169,6 @@ class GAN(object):
         print('Time of training-{}'.format((self.t_end - self.t_begin)))
         # Save the trained parameters
         self.save_model()
-
 
     def evaluate(self, test_loader, D_model_path, G_model_path):
         self.load_model(D_model_path, G_model_path)

@@ -8,6 +8,7 @@ import os
 from utils.tensorboard_logger import Logger
 from torchvision import utils
 
+
 class Generator(torch.nn.Module):
     def __init__(self, channels):
         super().__init__()
@@ -234,16 +235,14 @@ class WGAN_CP(object):
                 #output = str(g_iter) + " " + str(time) + " " + str(inception_score[0]) + "\n"
                 #self.file.write(output)
 
-
                 # ============ TensorBoard logging ============#
                 # (1) Log the scalar values
                 info = {
-                    'Wasserstein distance': Wasserstein_D.data[0],
-                    'Loss D': d_loss.data[0],
-                    'Loss G': g_cost.data[0],
-                    'Loss D Real': d_loss_real.data[0],
-                    'Loss D Fake': d_loss_fake.data[0]
-
+                    'Wasserstein distance': Wasserstein_D.data,
+                    'Loss D': d_loss.data,
+                    'Loss G': g_cost.data,
+                    'Loss D Real': d_loss_real.data,
+                    'Loss D Fake': d_loss_fake.data
                 }
 
                 for tag, value in info.items():
@@ -257,7 +256,6 @@ class WGAN_CP(object):
 
                 for tag, images in info.items():
                     self.logger.image_summary(tag, images, g_iter + 1)
-
 
         self.t_end = t.time()
         print('Time of training-{}'.format((self.t_end - self.t_begin)))
@@ -319,7 +317,7 @@ class WGAN_CP(object):
             os.makedirs('interpolated_images/')
 
         number_int = 10
-        # interpolate between twe noise(z1, z2).
+        # interpolate between two noise (z1, z2).
         z_intp = torch.FloatTensor(1, 100, 1, 1)
         z1 = torch.randn(1, 100, 1, 1)
         z2 = torch.randn(1, 100, 1, 1)
