@@ -1,4 +1,4 @@
-tensorflow==2.0.0
+tensorflow==2.0.3
 torch==1.6.0
 matplotlib==3.2.1
 numpy==1.19.2
