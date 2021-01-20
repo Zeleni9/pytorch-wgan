@@ -10,7 +10,7 @@ def get_data_loader(args):
         trans = transforms.Compose([
             transforms.Scale(32),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize((0.5, ), (0.5, )),
         ])
         train_dataset = MNIST(root=args.dataroot, train=True, download=args.download, transform=trans)
         test_dataset = MNIST(root=args.dataroot, train=False, download=args.download, transform=trans)
