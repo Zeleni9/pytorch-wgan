@@ -13,7 +13,7 @@ The prominent packages are:
 
 * numpy
 * scikit-learn
-* tensorflow 2.0
+* tensorflow 2.5.0
 * pytorch 1.6.0
 * torchvision 0.7.0
 

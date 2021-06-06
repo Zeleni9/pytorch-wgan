@@ -142,7 +142,7 @@ class DCGAN_MODEL(object):
                 # Train discriminator
                 # Compute BCE_Loss using real images
                 outputs = self.D(images)
-                d_loss_real = self.loss(outputs, real_labels)
+                d_loss_real = self.loss(outputs.flatten(), real_labels)
                 real_score = outputs
 
                 # Compute BCE Loss using fake images
@@ -152,7 +152,7 @@ class DCGAN_MODEL(object):
                     z = Variable(torch.randn(self.batch_size, 100, 1, 1))
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
-                d_loss_fake = self.loss(outputs, fake_labels)
+                d_loss_fake = self.loss(outputs.flatten(), fake_labels)
                 fake_score = outputs
 
                 # Optimize discriminator
@@ -169,7 +169,7 @@ class DCGAN_MODEL(object):
                     z = Variable(torch.randn(self.batch_size, 100, 1, 1))
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
-                g_loss = self.loss(outputs, real_labels)
+                g_loss = self.loss(outputs.flatten(), real_labels)
 
                 # Optimize generator
                 self.D.zero_grad()
