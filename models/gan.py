@@ -81,13 +81,13 @@ class GAN(object):
                 # compute BCE_Loss using real images where BCE_Loss(x, y): - y * log(D(x)) - (1-y) * log(1 - D(x))
                 # [Training discriminator = Maximizing discriminator being correct]
                 outputs = self.D(images)
-                d_loss_real = self.loss(outputs, real_labels)
+                d_loss_real = self.loss(outputs.flatten(), real_labels)
                 real_score = outputs
 
                 # Compute BCELoss using fake images
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
-                d_loss_fake = self.loss(outputs, fake_labels)
+                d_loss_fake = self.loss(outputs.flatten(), fake_labels)
                 fake_score = outputs
 
                 # Optimizie discriminator
@@ -107,7 +107,7 @@ class GAN(object):
                 # We train G to maximize log(D(G(z))[maximize likelihood of discriminator being wrong] instead of
                 # minimizing log(1-D(G(z)))[minizing likelihood of discriminator being correct]
                 # From paper  [https://arxiv.org/pdf/1406.2661.pdf]
-                g_loss = self.loss(outputs, real_labels)
+                g_loss = self.loss(outputs.flatten(), real_labels)
 
                 # Optimize generator
                 self.D.zero_grad()
@@ -121,7 +121,10 @@ class GAN(object):
                     print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f" %
                           ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data, g_loss.data))
 
-                    z = Variable(torch.randn(self.batch_size, 100).cuda(self.cuda_index))
+                    if self.cuda:
+                        z = Variable(torch.randn(self.batch_size, 100).cuda(self.cuda_index))
+                    else:
+                        z = Variable(torch.randn(self.batch_size, 100))
 
                     # ============ TensorBoard logging ============#
                     # (1) Log the scalar values
@@ -157,7 +160,10 @@ class GAN(object):
                         os.makedirs('training_result_images/')
 
                     # Denormalize images and save them in grid 8x8
-                    z = Variable(torch.randn(self.batch_size, 100)).cuda(self.cuda_index)
+                    if self.cuda:
+                        z = Variable(torch.randn(self.batch_size, 100).cuda(self.cuda_index))
+                    else:
+                        z = Variable(torch.randn(self.batch_size, 100))
                     samples = self.G(z)
                     samples = samples.mul(0.5).add(0.5)
                     samples = samples.data.cpu()
@@ -172,7 +178,10 @@ class GAN(object):
 
     def evaluate(self, test_loader, D_model_path, G_model_path):
         self.load_model(D_model_path, G_model_path)
-        z = Variable(torch.randn(self.batch_size, 100)).cuda(self.cuda_index)
+        if self.cuda:
+            z = Variable(torch.randn(self.batch_size, 100).cuda(self.cuda_index))
+        else:
+            z = Variable(torch.randn(self.batch_size, 100))
         samples = self.G(z)
         samples = samples.mul(0.5).add(0.5)
         samples = samples.data.cpu()

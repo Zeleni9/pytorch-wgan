@@ -1,9 +1,7 @@
-tensorflow==2.4.0
-torch==1.6.0
-matplotlib==3.2.1
-numpy==1.19.2
-torchvision==0.7.0
-six==1.11.0
-scipy==1.4.1
-Pillow==8.0.0
-scikit_learn==0.23.2
+tensorflow==2.5.0
+torch==1.8.1
+matplotlib
+numpy
+torchvision==0.9.1
+scipy
+scikit_learn

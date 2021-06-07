@@ -262,7 +262,7 @@ class WGAN_GP(object):
                 }
 
                 for tag, value in info.items():
-                    self.logger.scalar_summary(tag, value, g_iter + 1)
+                    self.logger.scalar_summary(tag, value.cpu(), g_iter + 1)
 
                 # (3) Log the images
                 info = {
