@@ -32,8 +32,8 @@ def main(args):
     # start evaluating on test data
     else:
         model.evaluate(test_loader, args.load_D, args.load_G)
-        # for i in range(50):
-        #    model.generate_latent_walk(i)
+        for i in range(50):
+           model.generate_latent_walk(i)
 
 
 if __name__ == '__main__':

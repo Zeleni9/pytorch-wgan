@@ -2,6 +2,7 @@ import os
 import time
 import torch
 import torch.nn as nn
+from torchvision import utils
 from torch.autograd import Variable
 from utils.tensorboard_logger import Logger
 
