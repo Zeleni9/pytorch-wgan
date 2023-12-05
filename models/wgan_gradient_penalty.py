@@ -321,6 +321,9 @@ class WGAN_GP(object):
                                    prob_interpolated.size()),
                                create_graph=True, retain_graph=True)[0]
 
+        # flatten the gradients to it calculates norm batchwise
+        gradients = gradients.view(gradients.size(0), -1)
+        
         grad_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean() * self.lambda_term
         return grad_penalty
 
