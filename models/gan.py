@@ -67,7 +67,7 @@ class GAN(object):
 
                 # Flatten image 1,32x32 to 1024
                 images = images.view(self.batch_size, -1)
-                z = torch.rand((self.batch_size, 100))
+                z = torch.randn((self.batch_size, 100))
 
                 if self.cuda:
                     real_labels = Variable(torch.ones(self.batch_size)).cuda(self.cuda_index)

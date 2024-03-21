@@ -127,15 +127,14 @@ class DCGAN_MODEL(object):
                 if i == train_loader.dataset.__len__() // self.batch_size:
                     break
 
-                z = torch.rand((self.batch_size, 100, 1, 1))
                 real_labels = torch.ones(self.batch_size)
                 fake_labels = torch.zeros(self.batch_size)
 
                 if self.cuda:
-                    images, z = Variable(images).cuda(self.cuda_index), Variable(z).cuda(self.cuda_index)
+                    images = Variable(images).cuda(self.cuda_index)
                     real_labels, fake_labels = Variable(real_labels).cuda(self.cuda_index), Variable(fake_labels).cuda(self.cuda_index)
                 else:
-                    images, z = Variable(images), Variable(z)
+                    images = Variable(images)
                     real_labels, fake_labels = Variable(real_labels), Variable(fake_labels)
 
 
