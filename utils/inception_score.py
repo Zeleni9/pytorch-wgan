@@ -40,7 +40,7 @@ def get_inception_score(imgs, cuda=True, batch_size=32, resize=False, splits=1):
         if resize:
             x = up(x)
         x = inception_model(x)
-        return F.softmax(x).data.cpu().numpy()
+        return F.softmax(x, dim=1).data.cpu().numpy()
 
     # Get predictions
     preds = np.zeros((N, 1000))

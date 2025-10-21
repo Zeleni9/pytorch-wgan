@@ -39,5 +39,10 @@ def check_args(args):
         args.channels = 3
     else:
         args.channels = 1
+
+    # Convert string arguments to boolean
     args.cuda = True if args.cuda == 'True' else False
+    args.is_train = True if args.is_train == 'True' else False
+    args.download = True if args.download == 'True' else False
+
     return args

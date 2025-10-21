@@ -127,7 +127,7 @@ class DCGAN_MODEL(object):
                 if i == train_loader.dataset.__len__() // self.batch_size:
                     break
 
-                z = torch.rand((self.batch_size, 100, 1, 1))
+                z = torch.randn((self.batch_size, 100, 1, 1))
                 real_labels = torch.ones(self.batch_size)
                 fake_labels = torch.zeros(self.batch_size)
 
@@ -260,6 +260,8 @@ class DCGAN_MODEL(object):
 
     def evaluate(self, test_loader, D_model_path, G_model_path):
         self.load_model(D_model_path, G_model_path)
+        self.G.eval()
+        self.D.eval()
         z = Variable(torch.randn(self.batch_size, 100, 1, 1)).cuda(self.cuda_index)
         samples = self.G(z)
         samples = samples.mul(0.5).add(0.5)

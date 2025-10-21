@@ -95,7 +95,7 @@ class WGAN_CP(object):
         self.learning_rate = 0.00005
 
         self.batch_size = 64
-        self.weight_cliping_limit = 0.01
+        self.weight_clipping_limit = 0.01
 
         # WGAN with gradient clipping uses RMSprop instead of ADAM
         self.d_optimizer = torch.optim.RMSprop(self.D.parameters(), lr=self.learning_rate)
@@ -149,16 +149,16 @@ class WGAN_CP(object):
             for d_iter in range(self.critic_iter):
                 self.D.zero_grad()
 
-                # Clamp parameters to a range [-c, c], c=self.weight_cliping_limit
+                # Clamp parameters to a range [-c, c], c=self.weight_clipping_limit
                 for p in self.D.parameters():
-                    p.data.clamp_(-self.weight_cliping_limit, self.weight_cliping_limit)
+                    p.data.clamp_(-self.weight_clipping_limit, self.weight_clipping_limit)
 
                 images = self.data.__next__()
                 # Check for batch to have full batch_size
                 if (images.size()[0] != self.batch_size):
                     continue
 
-                z = torch.rand((self.batch_size, 100, 1, 1))
+                z = torch.randn((self.batch_size, 100, 1, 1))
 
                 images, z = self.get_torch_variable(images), self.get_torch_variable(z)
 
@@ -272,6 +272,8 @@ class WGAN_CP(object):
 
     def evaluate(self, test_loader, D_model_path, G_model_path):
         self.load_model(D_model_path, G_model_path)
+        self.G.eval()
+        self.D.eval()
         z = self.get_torch_variable(torch.randn(self.batch_size, 100, 1, 1))
         samples = self.G(z)
         samples = samples.mul(0.5).add(0.5)
