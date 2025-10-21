@@ -196,7 +196,7 @@ class WGAN_CP(object):
             fake_images = self.G(z)
             g_loss = self.D(fake_images)
             g_loss = g_loss.mean().mean(0).view(1)
-            g_loss.backward(one)
+            g_loss.backward(mone)
             g_cost = -g_loss
             self.g_optimizer.step()
             print(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {g_loss.data}')
