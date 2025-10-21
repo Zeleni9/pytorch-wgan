@@ -164,7 +164,7 @@ class WGAN_GP(object):
                 if (images.size()[0] != self.batch_size):
                     continue
 
-                z = torch.rand((self.batch_size, 100, 1, 1))
+                z = torch.randn((self.batch_size, 100, 1, 1))
 
                 images, z = self.get_torch_variable(images), self.get_torch_variable(z)
 
@@ -284,6 +284,8 @@ class WGAN_GP(object):
 
     def evaluate(self, test_loader, D_model_path, G_model_path):
         self.load_model(D_model_path, G_model_path)
+        self.G.eval()
+        self.D.eval()
         z = self.get_torch_variable(torch.randn(self.batch_size, 100, 1, 1))
         samples = self.G(z)
         samples = samples.mul(0.5).add(0.5)
