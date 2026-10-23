@@ -25,7 +25,7 @@ class Logger(object):
                 else:
                     img = img[:, :, np.newaxis]
                 img = img[np.newaxis, :]
-                if not imgs is None:
+                if imgs is not None:
                     imgs = np.append(imgs, img, axis=0)
                 else:
                     imgs = img

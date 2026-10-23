@@ -83,13 +83,11 @@ class GAN(object):
                 # [Training discriminator = Maximizing discriminator being correct]
                 outputs = self.D(images)
                 d_loss_real = self.loss(outputs.flatten(), real_labels)
-                real_score = outputs
 
                 # Compute BCELoss using fake images
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
                 d_loss_fake = self.loss(outputs.flatten(), fake_labels)
-                fake_score = outputs
 
                 # Optimizie discriminator
                 d_loss = d_loss_real + d_loss_fake

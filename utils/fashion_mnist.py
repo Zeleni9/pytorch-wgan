@@ -190,7 +190,7 @@ def read_image_file(path):
         num_cols = get_int(data[12:16])
         images = []
         idx = 16
-        for l in range(length):
+        for _ in range(length):
             img = []
             images.append(img)
             for r in range(num_rows):

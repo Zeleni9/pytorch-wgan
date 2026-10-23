@@ -4,8 +4,6 @@ from torch.autograd import Variable
 import time as t
 import os
 from utils.tensorboard_logger import Logger
-from utils.inception_score import get_inception_score
-from itertools import chain
 from torchvision import utils
 
 class Generator(torch.nn.Module):
@@ -143,7 +141,6 @@ class DCGAN_MODEL(object):
                 # Compute BCE_Loss using real images
                 outputs = self.D(images)
                 d_loss_real = self.loss(outputs.flatten(), real_labels)
-                real_score = outputs
 
                 # Compute BCE Loss using fake images
                 if self.cuda:
@@ -153,7 +150,6 @@ class DCGAN_MODEL(object):
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
                 d_loss_fake = self.loss(outputs.flatten(), fake_labels)
-                fake_score = outputs
 
                 # Optimize discriminator
                 d_loss = d_loss_real + d_loss_fake

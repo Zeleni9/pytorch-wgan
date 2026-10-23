@@ -5,11 +5,10 @@ from torch.autograd import Variable
 from torch import autograd
 import time as t
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
 import os
 from utils.tensorboard_logger import Logger
-from itertools import chain
 from torchvision import utils
+plt.switch_backend('agg')
 
 SAVE_PER_TIMES = 100
 

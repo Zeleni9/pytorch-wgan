@@ -1,5 +1,4 @@
 import argparse
-import os
 
 
 def parse_args():
@@ -26,13 +25,13 @@ def check_args(args):
     # --epoch
     try:
         assert args.epochs >= 1
-    except:
+    except AssertionError:
         print('Number of epochs must be larger than or equal to one')
 
     # --batch_size
     try:
         assert args.batch_size >= 1
-    except:
+    except AssertionError:
         print('Batch size must be larger than or equal to one')
 
     if args.dataset == 'cifar' or args.dataset == 'stl10':
