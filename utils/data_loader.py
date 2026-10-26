@@ -46,7 +46,9 @@ def get_data_loader(args):
     assert train_dataset
     assert test_dataset
 
-    train_dataloader = data_utils.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    test_dataloader = data_utils.DataLoader(test_dataset,  batch_size=args.batch_size, shuffle=True)
+    train_dataloader = data_utils.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
+                                             num_workers=4, pin_memory=True, persistent_workers=True)
+    test_dataloader = data_utils.DataLoader(test_dataset, batch_size=args.batch_size, shuffle=True,
+                                            num_workers=4, pin_memory=True, persistent_workers=True)
 
     return train_dataloader, test_dataloader
