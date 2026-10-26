@@ -46,7 +46,10 @@ def get_data_loader(args):
     assert train_dataset
     assert test_dataset
 
-    train_dataloader = data_utils.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+    num_workers = args.num_workers
+    train_dataloader = data_utils.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
+                                             num_workers=num_workers, pin_memory=args.cuda,
+                                             persistent_workers=num_workers > 0)
     test_dataloader = data_utils.DataLoader(test_dataset,  batch_size=args.batch_size, shuffle=True)
 
     return train_dataloader, test_dataloader
